@@ -1,0 +1,12 @@
+bin/
+include/
+lib/
+lib64/
+etc/
+share/
+pyvenv.cfg
+__pycache__/
+
+fruit_box.db
+.streamlit/secrets.toml
+assets/

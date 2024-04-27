@@ -1,0 +1,52 @@
+{
+    "apple": {
+        "index": 0,
+        "name_ko": "사과",
+        "color": "#FF0000"
+    },
+    "banana": {
+        "index": 1,
+        "name_ko": "바나나",
+        "color": "#FFEF04"
+    },
+    "watermelon": {
+        "index": 2,
+        "name_ko": "수박",
+        "color": "#1DDB16"
+    },
+    "strawberry": {
+        "index": 3,
+        "name_ko": "딸기",
+        "color": "#FF00DD"
+    },
+    "orange": {
+        "index": 4,
+        "name_ko": "오렌지",
+        "color": "#FF5E00"
+    },
+    "grape": {
+        "index": 5,
+        "name_ko": "포도",
+        "color": "#5F00FF"
+    },
+    "kiwi": {
+        "index": 6,
+        "name_ko": "키위",
+        "color": "#993800"
+    },
+    "coconut": {
+        "index": 7,
+        "name_ko": "코코넛",
+        "color": "#FFFFFF"
+    },
+    "blueberry": {
+        "index": 8,
+        "name_ko": "블루베리",
+        "color": "#0100FF"
+    },
+    "blackberry": {
+        "index": 9,
+        "name_ko": "블랙베리",
+        "color": "#000000"
+    }
+}
