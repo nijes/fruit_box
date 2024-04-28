@@ -8,7 +8,7 @@ def register_section():
             "name", max_chars=10, help="새로운 이름의 경우 자동 등록"
         )
         user_pw = st.text_input("password", max_chars=10)
-        
+
         if st.button(
             "점수 등록",
             disabled=(not user_id or not user_pw),

@@ -13,15 +13,17 @@ def main():
     #     init_db()
     if "work_progress" in st.session_state:
         boxing_section()
-    
+
     else:
         with st.expander("GUIDE", expanded=True):
-            st.markdown("""
+            st.markdown(
+                """
             * 상단에서 과일 이름을 선택한 후, 맞는 과일을 찾아 박스를 치세요.
             * 맞힌 박스 수, 틀린 박스 수, 걸린 시간에 따라 점수가 정해집니다.
-            """)
+            """
+            )
             st.image("assets/info/boxing_exam.png")
-        
+
             st.header("")
         if st.button("START", use_container_width=True, type="primary"):
             boxing_section()

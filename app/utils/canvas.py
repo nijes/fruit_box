@@ -4,8 +4,10 @@ import numpy as np
 from PIL import Image
 from streamlit_drawable_canvas import st_canvas
 import json
+
 # from utils.timer import timer
 from utils.scoreboard import scoreboard_section
+
 # import asyncio
 import time
 

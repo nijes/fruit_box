@@ -67,30 +67,33 @@ def scoreboard_section():
     if "finish_time" not in st.session_state["work_progress"]:
         st.session_state["work_progress"]["finish_time"] = time.time()
     if "score" not in st.session_state["work_progress"]:
-        st.session_state["work_progress"]["score"] = get_score(st.session_state["work_progress"]["complete"], st.session_state["work_progress"]["finish_time"] - st.session_state["work_progress"]["start_time"])
-    
+        st.session_state["work_progress"]["score"] = get_score(
+            st.session_state["work_progress"]["complete"],
+            st.session_state["work_progress"]["finish_time"]
+            - st.session_state["work_progress"]["start_time"],
+        )
+
     user_score = st.session_state["work_progress"]["score"]
-    
+
     cols = st.columns([1, 1, 1, 2])
     cols[0].metric("맞힌 박스", user_score["correct_box"])
     cols[1].metric("걸린 시간", user_score["duration"])
     cols[2].metric("SCORE", user_score["score"])
 
     with cols[-1].container():
-        register_avaliable =  register_section()
+        register_avaliable = register_section()
         if register_avaliable:
             date = datetime.now().strftime("%y%m%d")
             insert_db(
-            "user_score",
-            user_id=st.session_state["user_id"],
-            correct_box=user_score["correct_box"],
-            incorrect_box=user_score["incorrect_box"],
-            duration=user_score["duration"],
-            score=user_score["score"],
-            date=date,
-        )
-    
-    
+                "user_score",
+                user_id=st.session_state["user_id"],
+                correct_box=user_score["correct_box"],
+                incorrect_box=user_score["incorrect_box"],
+                duration=user_score["duration"],
+                score=user_score["score"],
+                date=date,
+            )
+
     # if st.session_state["user_id"] == "":
     #     st.info(":exclamation:이름을 입력해야지만, 기록을 저장할 수 있습니다")
 
