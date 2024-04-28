@@ -5,6 +5,7 @@ import math
 from utils.db import insert_db, inquire_db
 from datetime import datetime
 import pandas as pd
+from utils.auth import register_section
 
 
 IMG_CONFIG = json.load(open("img_config.json", "r"))
@@ -63,24 +64,35 @@ def get_nearest_box(src_bbox: list, trg_bboxes: list):
 
 
 def scoreboard_section():
-    finish_time = time.time()
-    time_duration = finish_time - st.session_state["work_progress"]["start_time"]
-    user_score = get_score(st.session_state["work_progress"]["complete"], time_duration)
-    st.metric("SCORE", user_score["score"])
+    if "finish_time" not in st.session_state["work_progress"]:
+        st.session_state["work_progress"]["finish_time"] = time.time()
+    if "score" not in st.session_state["work_progress"]:
+        st.session_state["work_progress"]["score"] = get_score(st.session_state["work_progress"]["complete"], st.session_state["work_progress"]["finish_time"] - st.session_state["work_progress"]["start_time"])
+    
+    user_score = st.session_state["work_progress"]["score"]
+    
+    cols = st.columns([1, 1, 1, 2])
+    cols[0].metric("맞힌 박스", user_score["correct_box"])
+    cols[1].metric("걸린 시간", user_score["duration"])
+    cols[2].metric("SCORE", user_score["score"])
 
-    # if st.session_state['user_id']:
-    date = datetime.now().strftime("%y%m%d")
-    insert_db(
-        "user_score",
-        user_id=st.session_state["user_id"],
-        correct_box=user_score["correct_box"],
-        incorrect_box=user_score["incorrect_box"],
-        duration=user_score["duration"],
-        score=user_score["score"],
-        date=date,
-    )
-    if st.session_state["user_id"] == "":
-        st.info(":exclamation:이름을 입력해야지만, 기록을 저장할 수 있습니다")
+    with cols[-1].container():
+        register_avaliable =  register_section()
+        if register_avaliable:
+            date = datetime.now().strftime("%y%m%d")
+            insert_db(
+            "user_score",
+            user_id=st.session_state["user_id"],
+            correct_box=user_score["correct_box"],
+            incorrect_box=user_score["incorrect_box"],
+            duration=user_score["duration"],
+            score=user_score["score"],
+            date=date,
+        )
+    
+    
+    # if st.session_state["user_id"] == "":
+    #     st.info(":exclamation:이름을 입력해야지만, 기록을 저장할 수 있습니다")
 
     score_top_10 = inquire_db(
         "user_score", condition="user_id != ''", sort="score DESC", limit=10
@@ -102,16 +114,13 @@ def scoreboard_section():
     st.dataframe(pd.DataFrame(score_top_10), use_container_width=True, hide_index=True)
 
 
-def get_score(user_completion: dict, time_duration: float, threshold=0.7):
-    print("### SCORING...")
-
+def get_score(user_completion: dict, time_duration: float, threshold=0.6):
     answer_count = 0
     color_label_dict = {}
     for k, v in LABEL_CONFIG.items():
         color_label_dict[v["color"]] = k
 
     for img_name in IMG_CONFIG.keys():
-        print("img:", img_name)
         answer_bboxes = IMG_CONFIG[img_name]["bboxes"]
 
         # answer_bboxes와 동일한 형식으로 user_bboxes 만들기

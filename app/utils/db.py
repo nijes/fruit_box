@@ -49,3 +49,7 @@ def init_db():
     con.commit()
     con.close()
     print("*** DB initializedd ***")
+
+
+if __name__ == "__main__":
+    init_db()

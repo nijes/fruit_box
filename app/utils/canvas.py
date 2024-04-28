@@ -15,9 +15,9 @@ IMG_CONFIG = json.load(open("img_config.json", "r"))
 IMG_DIR = "assets/"
 
 
-def get_imgs(img_path=None):
+def get_imgs(img_path=IMG_DIR):
     img_list = list(
-        filter(lambda x: x.endswith(("jpg", "jpeg", "png")), os.listdir(IMG_DIR))
+        filter(lambda x: x.endswith(("jpg", "jpeg", "png")), os.listdir(img_path))
     )
     return img_list
 
