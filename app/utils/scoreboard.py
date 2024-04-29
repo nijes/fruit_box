@@ -36,13 +36,13 @@ def get_overlap_ratio(bbox_1: list, bbox_2: list):
     """
     overlap_left = max(bbox_1[0], bbox_2[0])
     overlap_right = min(bbox_1[0] + bbox_1[2], bbox_2[0] + bbox_2[2])
-    overlap_top = min(bbox_1[1], bbox_2[1])
-    overlap_bottom = max(bbox_1[1] - bbox_1[3], bbox_2[1] - bbox_2[3])
+    overlap_top = max(bbox_1[1], bbox_2[1])
+    overlap_bottom = min(bbox_1[1] + bbox_1[3], bbox_2[1] + bbox_2[3])
 
     overlap_area = max(overlap_right - overlap_left, 0) * max(
-        overlap_top - overlap_bottom, 0
+        overlap_bottom - overlap_top, 0
     )
-    total_area = bbox_1[2] * bbox_1[3] + bbox_2[2] * bbox_2[2]
+    total_area = bbox_1[2] * bbox_1[3] + bbox_2[2] * bbox_2[3]
 
     return overlap_area / (total_area - overlap_area)
 
@@ -51,7 +51,7 @@ def get_nearest_box(src_bbox: list, trg_bboxes: list):
     src_bbox_center = get_bbox_center(src_bbox)
     trg_bboxes_center = map(get_bbox_center, trg_bboxes)
 
-    nearest_bbox = 0
+    nearest_bbox_idx = 0
     min_distance = math.inf
     for i, trg_bbox_center in enumerate(trg_bboxes_center):
         distance = abs(src_bbox_center[0] - trg_bbox_center[0]) + abs(
@@ -59,8 +59,8 @@ def get_nearest_box(src_bbox: list, trg_bboxes: list):
         )
         if distance < min_distance:
             min_distance = distance
-            nearest_bbox = i
-    return trg_bboxes[nearest_bbox]
+            nearest_bbox_idx = i
+    return trg_bboxes[nearest_bbox_idx]
 
 
 def scoreboard_section():
@@ -75,10 +75,12 @@ def scoreboard_section():
 
     user_score = st.session_state["work_progress"]["score"]
 
-    cols = st.columns([1, 1, 1, 2])
-    cols[0].metric("맞힌 박스", user_score["correct_box"])
-    cols[1].metric("걸린 시간", user_score["duration"])
-    cols[2].metric("SCORE", user_score["score"])
+    cols = st.columns([3, 2])
+    sub_cols = cols[0].columns(3)
+    sub_cols[0].metric("맞힌 박스", user_score["correct_box"])
+    sub_cols[1].metric("걸린 시간", user_score["duration"])
+    sub_cols[2].metric("SCORE", user_score["score"])
+    cols[0].caption("* SCORE = 맞힌 박스 * 10 - 틀린 박스 * 5 - 걸린 시간(s)")
 
     with cols[-1].container():
         register_avaliable = register_section()
@@ -93,9 +95,6 @@ def scoreboard_section():
                 score=user_score["score"],
                 date=date,
             )
-
-    # if st.session_state["user_id"] == "":
-    #     st.info(":exclamation:이름을 입력해야지만, 기록을 저장할 수 있습니다")
 
     score_top_10 = inquire_db(
         "user_score", condition="user_id != ''", sort="score DESC", limit=10

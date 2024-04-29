@@ -15,6 +15,9 @@ def register_section():
             type="primary",
             use_container_width=True,
         ):
+            if "user_id" in st.session_state:
+                st.warning(":exclamation: 이미 점수를 등록하였습니다.")
+                return False
             user_existence = inquire_db("user", f"user_id='{user_id}'")
             # 기존 user이지만 pw 불일치
             if user_existence and user_existence[0][1] != user_pw:
